@@ -30,30 +30,30 @@ Les raffinements permettent de ...
 \subsubsection{\textit{deplacer\_velo(vv,gg)}}
 \subsubsection{\textit{reparer\_velo(velo)}}
 \newpage
-\section{Scénarii de test}
-Voici quelques scénarii utilisés pour tester la machine abstraite Velhop. Après initialisation, le résultat obtenu est le suivant : \\
-invariant\_ok \\
+\section{Scénarios de test}
+Voici quelques scénarios utilisés pour tester la machine abstraite Velhop. Après initialisation sur ProB, le résultat obtenu est le suivant : \\
 velos = \{1,2,3,4,5,6,7,8,9,10,11,12\};
-gare = \{1,2,3,4\} \\
-etatVelos(1) = bon\_etat
-etatVelos(2) = bon\_etat
-etatVelos(3) = bon\_etat
-etatVelos(4) = bon\_etat
-etatVelos(5) = bon\_etat
-etatVelos(6) = bon\_etat
-etatVelos(7) = bon\_etat
-etatVelos(8) = bon\_etat
-etatVelos(9) = bon\_etat
-etatVelos(10) = bon\_etat
-etatVelos(11) = bon\_etat
-etatVelos(12) = bon\_etat \\
+gare = \{1,2,3,4\}; \\
+etatVelos(1) = bon\_etat;
+etatVelos(2) = bon\_etat;
+etatVelos(3) = bon\_etat;
+etatVelos(4) = bon\_etat;
+etatVelos(5) = bon\_etat;
+etatVelos(6) = bon\_etat;
+etatVelos(7) = bon\_etat;
+etatVelos(8) = bon\_etat;
+etatVelos(9) = bon\_etat;
+etatVelos(10) = bon\_etat;
+etatVelos(11) = bon\_etat;
+etatVelos(12) = bon\_etat;  \\
 usagers = \{\};
-usagerVelo = \{\} \\
-gares(1) = [1,2,3]
-gares(2) = [4,5,6]
-gares(3) = [7,8,9]
-gares(4) = [10,11,12]
+usagerVelo = \{\}; \\
+gares(1) = [1,2,3];
+gares(2) = [4,5,6];
+gares(3) = [7,8,9];
+gares(4) = [10,11,12];
 \subsection{Premier scénario}
+Ce premier scénario permet de tester la création et suppression d'un usager ainsi que les opérations \textit{emprunter} et \textit{rendre} (sans blocage de l'usager).
 \begin{itemize}
   \item Initialisation
   \item Création d'un utilisateur 1 \\
@@ -61,36 +61,51 @@ gares(4) = [10,11,12]
   \item L'utilisateur 1 emprunte le vélo 1 à la gare 1 \\
   $\Rightarrow$ \textit{usagers(PERSONNES1) = actif ; usagerVelo(PERSONNES1)=1 ; $gares(1)$ = \{$(2\mapsto2)$,$(3\mapsto3)$\}}
   \item L'utilisateur 1 rend le vélo 1 en bon état à la gare 1 après 30 minutes \\
-  $\Rightarrow$ \textit{usagers(PERSONNES1) = actif ; usagerVelo=\{\} ; gares(1) = [1,2,3]}
+  $\Rightarrow$ \textit{usagers(PERSONNES1) = actif ; usagerVelo=\{\} ; $gares(1) = [1,2,3]$}
   \item L'utilisateur 1 est supprimé \\
   $\Rightarrow$ \textit{usagers = \{\}}
 \end{itemize}
 \subsection{Deuxième scénario}
+Ce scénario permet de tester le blocage d'un usager lorsqu'il rend un vélo abimé, le déblocage d'un utilisateur et l'opération \textit{réparer} : l'utilisateur débloqué peut emprunter le vélo réparé.
 \begin{itemize}
   \item Initialisation
   \item Création d'un utilisateur 1 \\
   $\Rightarrow$ \textit{usagers(PERSONNES1) = actif}
   \item L'utilisateur 1 emprunte le vélo 4 à la gare 2 \\
-  \item L'utilisateur 1 rend le vélo 4 abimé à la gare 3 après 45 minutes : il est bloqué
-  $\Rightarrow$ \textit{}
-  \item Le vélo 4 est réparé
-  \item L'utilisateur 1 est débloqué
-  \item L'utilisateur 1 emprunte le vélo 4 à la gare 3
-  \item L'utilisateur 1 rend le vélo 4 en bon état à la gare 1 après 30 minutes
-  \item L'utilisateur 1 est supprimé
+  $\Rightarrow$ \textit{usagers(PERSONNES1) = actif ; usagerVelo(PERSONNES1)=4 ; $gares(2)$ = \{$(2\mapsto5)$,$(3\mapsto6)$\}}
+  \item L'utilisateur 1 rend le vélo 4 abimé à la gare 3 après 45 minutes : il est bloqué \\
+  $\Rightarrow$ \textit{usagers(PERSONNES1) = bloque ; usagerVelo=\{\} ; etatVelos(4)=abime; $gares(3) = [7,8,9,4]$}
+  \item Le vélo 4 est réparé \\
+  $\Rightarrow$ \textit{etatVelos(4) = bon\_etat}
+  \item L'utilisateur 1 est débloqué \\
+  $\Rightarrow$ \textit{usagers(PERSONNES1) = actif}
+  \item L'utilisateur 1 emprunte le vélo 4 à la gare 3 \\
+  $\Rightarrow$ \textit{usagers(PERSONNES1) = actif ; usagerVelo(PERSONNES1) = 4 ; $gares(3) = [7,8,9]$}
+  \item L'utilisateur 1 rend le vélo 4 en bon état à la gare 1 après 30 minutes \\
+  $\Rightarrow$ \textit{usagers(PERSONNES1) = actif ; usagerVelo=\{\} ; $gares(1) = [1,2,3,4]$}
+  \item L'utilisateur 1 est supprimé \\
+  $\Rightarrow$ \textit{usagers = \{\}}
 \end{itemize}
 \subsection{Troisième scénario}
+Ce scénario permet de tester le blocage d'un usager lorsqu'il rend un vélo après l'avoir utilisé plus de 60 minutes, ainsi que l'opération \textit{déplacer} : un utilisateur peut emprunter un vélo dans la gare 1 après que l'administrateur y ait déplacé ce dernier.
 \begin{itemize}
   \item Initialisation
-  \item Création d'un utilisateur 1
-  \item Création d'un utilisateur 2
-  \item L'utilisateur 1 emprunte le vélo 4 à la gare 2
-  \item L'utilisateur 1 rend le vélo 4 en bon état à la gare 3 après 70 minutes : il est bloqué
-  \item L'administrateur déplace le vélo 4 dans la gare 1
-  \item L'utilisateur 2 emprunte le vélo 4 à la gare 1
-  \item L'utilisateur 2 rend le vélo 4 en bon état à la gare 1 après 30 minutes
-  \item L'utilisateur 1 est supprimé
-  \item L'utilisateur 2 est supprimé
+  \item Création d'un utilisateur 1 \\
+  $\Rightarrow$ \textit{usagers(PERSONNES1) = actif}
+  \item Création d'un utilisateur 2 \\
+  $\Rightarrow$ \textit{usagers(PERSONNES2) = actif}
+  \item L'utilisateur 1 emprunte le vélo 4 à la gare 2 \\
+  $\Rightarrow$ \textit{usagers(PERSONNES1) = actif ; usagerVelo(PERSONNES1)=4 ; $gares(2)$ = \{$(2\mapsto5)$,$(3\mapsto6)$\}}
+  \item L'utilisateur 1 rend le vélo 4 en bon état à la gare 3 après 70 minutes : il est bloqué \\
+  $\Rightarrow$ \textit{usagers(PERSONNES1) = bloque ; usagerVelo=\{\} ; etatVelos(4)=bon\_etat; $gares(3) = [7,8,9,4]$}
+  \item L'administrateur déplace le vélo 4 de la gare 3 vers la gare 1 \\
+  $\Rightarrow$ \textit{$gares(1) = [1,2,3,4] ; gares(3) = [7,8,9]$}
+  \item L'utilisateur 2 emprunte le vélo 4 à la gare 1 \\
+  $\Rightarrow$ \textit{usagers(PERSONNES2) = actif ; usagerVelo(PERSONNES2)=4 ; $gares(1)$ = [1,2,3]}
+  \item L'utilisateur 2 rend le vélo 4 en bon état à la gare 1 après 30 minutes \\
+  $\Rightarrow$ \textit{usagers(PERSONNES2) = actif ; usagerVelo=\{\} ; etatVelos(4)=bon\_etat; $gares(1) = [1,2,3,4]$}
+  \item Les utilisateurs 1 et 2 sont supprimés \\
+  $\Rightarrow$ \textit{usagers = \{\}}
 \end{itemize}
 \newpage
 \section{Premier raffinement}
