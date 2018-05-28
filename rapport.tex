@@ -1,0 +1,112 @@
+\documentclass[12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{xcolor}
+
+\pagestyle{plain}
+\title{Projet MFDLS \\ Vélos en libre service}
+\author{Anthony Araye et Camille Schnell}
+\date{1 mars 2018}
+\begin{document}
+\maketitle
+\newpage
+\renewcommand{\contentsname}{Sommaire}
+\tableofcontents
+\newpage
+\section{Introduction}
+L'objectif de ce projet est de modéliser un système permettant à des utilisateurs d'emprunter des vélos en libre service. Ces vélos sont stockés dans plusieurs gares au sein d'une ville. \\ \\
+Il s'agit ici de gérer l'ensemble des actions pouvant être effectuées par différentes personnes : des usagers ou des administrateurs du système. Nous avons ainsi modélisé des opérations afin qu'un administrateur puisse créer, supprimer ou débloquer un utilisateur et déplacer ou réparer des vélos ; les usagers pourront emprunter et rendre des vélos, à condition qu'ils ne soient pas bloqués. \\ \\
+Les raffinements permettent de ...
+\newpage
+\section{La machine abstraite}
+\textcolor{red}{\textbf{IL FAUT PRÉCISER DANS CETTE SECTION À CHAQUE FOIS QU'UNE PROPRIÉTÉ DU SUJET EST VÉRIFIÉE EN \\ LA CITANT (P1,P2,...)}}
+\subsection{Ensembles, variables et initialisation}
+\subsection{Opérations implémentées}
+\subsubsection{\textit{creer\_usager(user)}}
+\subsubsection{\textit{supprimer\_usager(user)}}
+\subsubsection{\textit{debloquer\_usager(user)}}
+\subsubsection{\textit{emprunter(user,vv,gg)}}
+\subsubsection{\textit{rendre(velo,gg,temps,etat)}}
+\subsubsection{\textit{deplacer\_velo(vv,gg)}}
+\subsubsection{\textit{reparer\_velo(velo)}}
+\newpage
+\section{Scénarii de test}
+Voici quelques scénarii utilisés pour tester la machine abstraite Velhop. Après initialisation, le résultat obtenu est le suivant : \\
+invariant\_ok \\
+velos = \{1,2,3,4,5,6,7,8,9,10,11,12\};
+gare = \{1,2,3,4\} \\
+etatVelos(1) = bon\_etat
+etatVelos(2) = bon\_etat
+etatVelos(3) = bon\_etat
+etatVelos(4) = bon\_etat
+etatVelos(5) = bon\_etat
+etatVelos(6) = bon\_etat
+etatVelos(7) = bon\_etat
+etatVelos(8) = bon\_etat
+etatVelos(9) = bon\_etat
+etatVelos(10) = bon\_etat
+etatVelos(11) = bon\_etat
+etatVelos(12) = bon\_etat \\
+usagers = \{\};
+usagerVelo = \{\} \\
+gares(1) = [1,2,3]
+gares(2) = [4,5,6]
+gares(3) = [7,8,9]
+gares(4) = [10,11,12]
+\subsection{Premier scénario}
+\begin{itemize}
+  \item Initialisation
+  \item Création d'un utilisateur 1 \\
+  $\Rightarrow$ \textit{usagers(PERSONNES1) = actif}
+  \item L'utilisateur 1 emprunte le vélo 1 à la gare 1 \\
+  $\Rightarrow$ \textit{usagers(PERSONNES1) = actif ; usagerVelo(PERSONNES1)=1 ; $gares(1)$ = \{$(2\mapsto2)$,$(3\mapsto3)$\}}
+  \item L'utilisateur 1 rend le vélo 1 en bon état à la gare 1 après 30 minutes \\
+  $\Rightarrow$ \textit{usagers(PERSONNES1) = actif ; usagerVelo=\{\} ; gares(1) = [1,2,3]}
+  \item L'utilisateur 1 est supprimé \\
+  $\Rightarrow$ \textit{usagers = \{\}}
+\end{itemize}
+\subsection{Deuxième scénario}
+\begin{itemize}
+  \item Initialisation
+  \item Création d'un utilisateur 1 \\
+  $\Rightarrow$ \textit{usagers(PERSONNES1) = actif}
+  \item L'utilisateur 1 emprunte le vélo 4 à la gare 2 \\
+  \item L'utilisateur 1 rend le vélo 4 abimé à la gare 3 après 45 minutes : il est bloqué
+  $\Rightarrow$ \textit{}
+  \item Le vélo 4 est réparé
+  \item L'utilisateur 1 est débloqué
+  \item L'utilisateur 1 emprunte le vélo 4 à la gare 3
+  \item L'utilisateur 1 rend le vélo 4 en bon état à la gare 1 après 30 minutes
+  \item L'utilisateur 1 est supprimé
+\end{itemize}
+\subsection{Troisième scénario}
+\begin{itemize}
+  \item Initialisation
+  \item Création d'un utilisateur 1
+  \item Création d'un utilisateur 2
+  \item L'utilisateur 1 emprunte le vélo 4 à la gare 2
+  \item L'utilisateur 1 rend le vélo 4 en bon état à la gare 3 après 70 minutes : il est bloqué
+  \item L'administrateur déplace le vélo 4 dans la gare 1
+  \item L'utilisateur 2 emprunte le vélo 4 à la gare 1
+  \item L'utilisateur 2 rend le vélo 4 en bon état à la gare 1 après 30 minutes
+  \item L'utilisateur 1 est supprimé
+  \item L'utilisateur 2 est supprimé
+\end{itemize}
+\newpage
+\section{Premier raffinement}
+\subsection{Invariant de collage}
+\subsection{Modification des opérations}
+\newpage
+\section{Deuxième raffinement}
+\subsection{Invariant de collage}
+\subsection{Modification des opérations}
+\section{Preuves}
+\subsection{Preuves de la machine abstraite}
+\subsection{Preuves du premier raffinement}
+\subsection{Preuves du deuxième raffinement}
+\newpage
+\section{Conclusion}
+
+
+
+\end{document}
