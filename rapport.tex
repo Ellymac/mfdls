@@ -67,17 +67,78 @@ Nous avons initialisé les quatres variables comme suit :
   \item usagerVelo := \{\} : comme il n'y a aucun utilisateur, il ne peut pas y avoir d'utilisateur qui a déjà emprunté un vélo.
   \item gares := \{1 |-> \{1 |-> 1, 2 |-> 2, 3 |-> 3\}, 2 |-> \{1 |-> 4, 2 |-> 5, 3 |-> 6\}, 3 |-> \{1 |-> 7, 2 |-> 8, 3 |-> 9\}, 4 |-> \{1 |-> 10, 2 |-> 11, 3 |-> 12\}\} : on répartit 3 vélos dans les quatre gares comme indiqué dans le sujet.
 \end{itemize}
-
-
-
 \subsection{Opérations implémentées}
 \subsubsection{\textit{creer\_usager(user)}}
+Cette opération permet de créer un utilisateur dans notre système.
+\paragraph{Préconditions}
+\[user \in PERSONNES \land user \in dom(usagers)\]
+
+La variable user doit apartenir à l'ensemble PERSONNES et doit également être dans le domaine de la fonction usagers.
+\paragraph{Corps de l'opération}
+\[ usagers := usagers \bigcup \{user \mapsto actif\} \]
+
+On ajoute à la variable usager le couple (user,actif).
 \subsubsection{\textit{supprimer\_usager(user)}}
+Cette opération permet de supprimer un utilisateur dans notre système.
+\paragraph{Préconditions}
+\[user \in PERSONNES \land user \in dom(usagers) \land usagers(user) \neq bloque \land user \neq dom(usagers) \]
+
+\paragraph{Corps de l'opération}
+\[ usagers := \{ user \} <<| usagers \]
+
+On fait la soustraction de \{ user \} dans la variable usagers.
+
 \subsubsection{\textit{debloquer\_usager(user)}}
+Cette opération permet de débloquer un utilisateur dans notre système.
+\paragraph{Préconditions}
+\[ user \in PERSONNES \land user \in dom(usagers) \land usagers(user) = bloque \land user \neq dom(usagerVelo) \]
+
+\paragraph{Corps de l'opération}
+\[usagers := usagers \leftarrow \{user \mapsto actif\} \]
+
+On fait la surcharge de \{ user -> actif \} dans la variable usagers.
 \subsubsection{\textit{emprunter(user,vv,gg)}}
+Cette opération permet l'emprunt d'un vélo par un utilisateur dans notre système.
+\paragraph{Préconditions}
+\[ user \in PERSONNES \land user \in dom(usagers) \land usagers(user) \neq bloque \land user \neq dom(usagerVelo) \]\[\land vv \in velos \land gg \in gare \land vv \neq ran(usagerVelo) \land vv \in ran(gares(gg)) \land etatVelos(vv) = bon\_etat\]
+\paragraph{Corps de l'opération}
+	\[ usagerVelo := usagerVelo \bigcup \{user \mapsto vv\} ||
+gares(gg) := gares(gg) |>> \{vv\}\]
+
+On ajoute à usagerVelo la relation \{ user -> vv \} et on soustrait à l'ensemble gares(gg) les relations dont l'image est vv.
 \subsubsection{\textit{rendre(velo,gg,temps,etat)}}
+Cette opération permet le rendu d'un vélo par un utilisateur dans notre système.
+\paragraph{Préconditions}
+\[ velo \in velos \land gg \in gare \land velo \in ran(usagerVelo) \land temps \in NAT1 \land etat \in ETATSVELO\]
+\paragraph{Corps de l'opération}
+\[ANY xx WHERE xx \in [|1;6|] \land xx \notin dom(gares(gg)) THEN\]
+\[ usagerVelo := usagerVelo |>> \{velo\} || \]
+\[ etatVelos := etatVelos \leftarrow \{ velo \mapsto etat \} || \]
+\[ gares(gg) := gares(gg) \bigcup \{xx \mapsto velo\} || \]
+\[ IF temps > 60 or etat = abime THEN \]
+\[ usagers := usagers <+ usagerVelo~[\{velo\}] * \{bloque\} \]
+\[ END \]
+\[END\]
+
 \subsubsection{\textit{deplacer\_velo(vv,gg)}}
+Cette opération permet le déplacement instantanée d'un vélo d'une gare à une autre dans notre système.
+\paragraph{Préconditions}
+\[ vv \in velos \land gg \in gare \land etatVelos(vv) = bon\_etat \land card(gares(gg))<6 \]
+\[\land vv \notin ran(gares(gg)) \land vv \notin ran(usagerVelo)\]
+\paragraph{Corps de l'opération}
+\[ANY ggg WHERE ggg \in gare \land vv \in ran(gares(ggg)) THEN
+\]
+\[ ANY xx WHERE xx \in [1;6] \land xx \notin dom(gares(gg)) THEN \]
+\[ gares := gares \leftarrow \{ggg \mapsto (gares(ggg) |>> \{vv\}), gg \mapsto (gares(gg) \bigcup \{xx \mapsto vv\})\} \]
+\[ END \]
+\[END\]
+
 \subsubsection{\textit{reparer\_velo(velo)}}
+Cette opération permet la réparation d'un vélo dans notre système.
+\paragraph{Préconditions}
+\[ velo \in velos \land etatVelos(velo) \neq bon\_etat \]
+\paragraph{Corps de l'opération}
+\[ etatVelos(velo) := bon\_etat \]
 \newpage
 \section{Scénarios de test}
 Voici quelques scénarios utilisés pour tester la machine abstraite Velhop. Après initialisation sur ProB, le résultat obtenu est le suivant : \\
