@@ -41,17 +41,17 @@ De plus, nous introduisons plusieurs ensembles :
 \begin{itemize}
   \item PERSONNES : un ensemble représentant les personnes.
   \item ETATS\_VELO : un ensemble représentant l'état que peut avoir un vélo (où ETATS\_VELO = \{bon\_etat, use, abime\})
-  \item STATUT : un ensemble représentant l'état d'un compte (où STATUT = {actif, bloque}).
+  \item STATUT : un ensemble représentant l'état d'un compte (où STATUT = \{actif, bloque\}).
 \end{itemize}
 \subsubsection{Variables et invariant}
-Grâce aux ensembles définies par nos soins, nous allons pouvoir définir des variables et ses invariants afin de spécifier notre machine.\\
+Grâce aux ensembles définis par nos soins, nous allons pouvoir définir des variables et des invariants afin de spécifier notre machine.\\
 
 Nous utilisons dans notre machine abstraite 4 variables :
 \begin{itemize}
   \item usagers : une fonction partielle de l'ensemble PERSONNE vers un élément de STATUT. Elle représente l'ensemble des utilisateurs du système Velhop.
   \item etatVelos : une fonction totale de l'ensemble velos vers l'ensemble ETATSVELO. Pour chaque vélo, on attribue un état afin de savoir si le vélo est utilisable ou non.
-  \item usagerVelo : une fonction partielle et injective du domaine de la fonction usager vers l'ensemble velos. Elle attribue pour un utilisateur un vélo. La fonction est partielle pour justifier la propriété 2. L'injectivité permet de définir le fait qu'un vélo ne peut être emprunté que pour une seule personne.
-  \item gares : une fonction totale de l'ensemble gare à un ensemble de fonctions partielles de [|1,6|] vers l'ensemble velos. Cette fonction permet de lier pour chaque gare, un ensemble de 6 bornes pouvant contenir 0 ou 1 vélo. Elle respecte donc la propriété 1. 
+  \item usagerVelo : une fonction partielle et injective du domaine de la fonction usager vers l'ensemble velos. Elle attribue pour un utilisateur un vélo. La fonction est partielle pour justifier la propriété 2. L'injectivité permet de définir le fait qu'un vélo ne peut être emprunté que par une seule personne.
+  \item gares : une fonction totale de l'ensemble gare à un ensemble de fonctions partielles de [|1,6|] vers l'ensemble velos. Cette fonction permet de lier pour chaque gare, un ensemble de 6 bornes pouvant contenir 0 ou 1 vélo. Elle respecte donc la propriété P1 du sujet.
 \end{itemize}
 
 En plus de ces variables (et de leurs invariants), on a ajouté un dernier invariant : %!g1.(g1 : dom(gares) => (!v1.(v1 : ran(gares(g1)) => (!g2.(g2 : dom(gares) & g2 /= g1 =>(v1 /: ran(gares(g2))))))))
@@ -62,10 +62,10 @@ En résumé, ce prédicat indique qu'un vélo ne peut pas être dans deux gares 
 \subsubsection{Initialisation}
 Nous avons initialisé les quatres variables comme suit :
 \begin{itemize}
-  \item usagers := \{\} : on l'initialise comme suit car il n'y a aucun utilisateurs au moment de la création de Velhop.
+  \item usagers := \{\} : on l'initialise comme suit car il n'y a aucun utilisateur au moment de la création de Velhop.
   \item etatVelos := velos * {bon\_etat} : tous les vélos sont en bon état au moment de l'initialisation.
   \item usagerVelo := \{\} : comme il n'y a aucun utilisateur, il ne peut pas y avoir d'utilisateur qui a déjà emprunté un vélo.
-  \item gares := \{1 |-> \{1 |-> 1, 2 |-> 2, 3 |-> 3\}, 2 |-> \{1 |-> 4, 2 |-> 5, 3 |-> 6\}, 3 |-> \{1 |-> 7, 2 |-> 8, 3 |-> 9\}, 4 |-> \{1 |-> 10, 2 |-> 11, 3 |-> 12\}\} : on répartit 3 vélos dans les quatre gares comme indiqué dans le sujet.
+  \item gares := \{1 |-> \{1 |-> 1, 2 |-> 2, 3 |-> 3\}, 2 |-> \{1 |-> 4, 2 |-> 5, 3 |-> 6\}, 3 |-> \{1 |-> 7, 2 |-> 8, 3 |-> 9\}, 4 |-> \{1 |-> 10, 2 |-> 11, 3 |-> 12\}\} : on répartit 3 vélos dans chacune des quatre gares comme indiqué dans le sujet.
 \end{itemize}
 
 
