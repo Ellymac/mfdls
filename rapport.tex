@@ -10,6 +10,32 @@
 \usepackage{eurosym}
 \usepackage{graphicx}
 \usepackage{fancybox}
+\usepackage{listings}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\color{codegray},
+    stringstyle=\color{codepurple},
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=3pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+
+\lstset{style=mystyle}
 
 \pagestyle{plain}
 \title{Projet MFDLS \\ Vélos en libre service}
@@ -24,7 +50,6 @@
 \section{Introduction}
 L'objectif de ce projet est de modéliser un système permettant à des utilisateurs d'emprunter des vélos en libre service. Ces vélos sont stockés dans plusieurs gares au sein d'une ville. \\ \\
 Il s'agit ici de gérer l'ensemble des actions pouvant être effectuées par différentes personnes : des usagers ou des administrateurs du système. Nous avons ainsi modélisé des opérations afin qu'un administrateur puisse créer, supprimer ou débloquer un utilisateur et déplacer ou réparer des vélos ; les usagers pourront emprunter et rendre des vélos, à condition qu'ils ne soient pas bloqués. \\ \\
-Les raffinements permettent de ...
 \newpage
 \section{La machine abstraite}
 \textcolor{red}{\textbf{IL FAUT PRÉCISER DANS CETTE SECTION À CHAQUE FOIS QU'UNE PROPRIÉTÉ DU SUJET EST VÉRIFIÉE EN \\ LA CITANT (P1,P2,...)}}
@@ -110,15 +135,19 @@ On ajoute à usagerVelo la relation \{ user -> vv \} et on soustrait à l'ensemb
 Cette opération permet le rendu d'un vélo par un utilisateur dans notre système.
 \paragraph{Préconditions}
 \[ velo \in velos \land gg \in gare \land velo \in ran(usagerVelo) \land temps \in NAT1 \land etat \in ETATSVELO\]
+
 \paragraph{Corps de l'opération}
-\[ANY xx WHERE xx \in [|1;6|] \land xx \notin dom(gares(gg)) THEN\]
-\[ usagerVelo := usagerVelo |>> \{velo\} || \]
-\[ etatVelos := etatVelos \leftarrow \{ velo \mapsto etat \} || \]
-\[ gares(gg) := gares(gg) \bigcup \{xx \mapsto velo\} || \]
-\[ IF temps > 60 or etat = abime THEN \]
-\[ usagers := usagers <+ usagerVelo~[\{velo\}] * \{bloque\} \]
-\[ END \]
-\[END\]
+\[\]
+\begin{lstlisting}
+      ANY xx WHERE xx : 1 .. 6 & xx /: dom(gares(gg)) THEN
+          usagerVelo := usagerVelo |>> {velo} ||
+          etatVelos := etatVelos <+ { velo |-> etat } ||
+          gares(gg) := gares(gg) \/ {xx |-> velo} ||
+          IF temps > 60 or etat = abime THEN
+              usagers := usagers <+ usagerVelo~[{velo}] * {bloque}
+          END
+      END
+\end{lstlisting}
 
 \subsubsection{\textit{deplacer\_velo(vv,gg)}}
 Cette opération permet le déplacement instantanée d'un vélo d'une gare à une autre dans notre système.
@@ -126,19 +155,24 @@ Cette opération permet le déplacement instantanée d'un vélo d'une gare à un
 \[ vv \in velos \land gg \in gare \land etatVelos(vv) = bon\_etat \land card(gares(gg))<6 \]
 \[\land vv \notin ran(gares(gg)) \land vv \notin ran(usagerVelo)\]
 \paragraph{Corps de l'opération}
-\[ANY ggg WHERE ggg \in gare \land vv \in ran(gares(ggg)) THEN
-\]
-\[ ANY xx WHERE xx \in [1;6] \land xx \notin dom(gares(gg)) THEN \]
-\[ gares := gares \leftarrow \{ggg \mapsto (gares(ggg) |>> \{vv\}), gg \mapsto (gares(gg) \bigcup \{xx \mapsto vv\})\} \]
-\[ END \]
-\[END\]
+\[\]
+\begin{lstlisting}
+      ANY ggg WHERE ggg : gare & vv : ran(gares(ggg)) THEN
+          ANY xx WHERE xx : 1 .. 6 & xx /: dom(gares(gg)) THEN
+              gares := gares <+ {ggg |-> (gares(ggg) |>> {vv}), gg |-> (gares(gg) \/ {xx |-> vv})}
+          END
+      END
+\end{lstlisting}
 
 \subsubsection{\textit{reparer\_velo(velo)}}
 Cette opération permet la réparation d'un vélo dans notre système.
 \paragraph{Préconditions}
 \[ velo \in velos \land etatVelos(velo) \neq bon\_etat \]
 \paragraph{Corps de l'opération}
-\[ etatVelos(velo) := bon\_etat \]
+\[\]
+\begin{lstlisting}
+  etatVelos(velo) := bon_etat
+\end{lstlisting}
 \newpage
 \section{Scénarios de test}
 Voici quelques scénarios utilisés pour tester la machine abstraite Velhop. Après initialisation sur ProB, le résultat obtenu est le suivant : \\
@@ -214,11 +248,14 @@ Ce scénario permet de tester le blocage d'un usager lorsqu'il rend un vélo apr
   $\Rightarrow$ \textit{usagers(PERSONNES2) = actif ; usagerVelo(PERSONNES2)=4 ; $gares(1)$ = [1,2,3]}
   \item L'utilisateur 2 rend le vélo 4 en bon état à la gare 1 après 30 minutes \\
   $\Rightarrow$ \textit{usagers(PERSONNES2) = actif ; usagerVelo=\{\} ; etatVelos(4)=bon\_etat; $gares(1) = [1,2,3,4]$}
+  \item L'utilisateur 1 est débloqué \\
+  $\Rightarrow$ \textit{usagers(PERSONNES1) = actif}
   \item Les utilisateurs 1 et 2 sont supprimés \\
   $\Rightarrow$ \textit{usagers = \{\}}
 \end{itemize}
 \newpage
 \section{Premier raffinement}
+Le premier raffinement raffine la variable etatVelos en une variable etats, fonction totale de ETATSVELO dans FIN(velos). Pour chaque état (bon\_etat, use, abime), la fonction etats lui associe un ensemble de velos. Ainsi, l'ensemble des vélos en bon\_etat se traduira par \textit{etats(bon\_etat)}.
 \subsection{Invariant de collage}
 \subsection{Modification des opérations}
 \newpage
@@ -231,7 +268,7 @@ Ce scénario permet de tester le blocage d'un usager lorsqu'il rend un vélo apr
 \subsection{Preuves du deuxième raffinement}
 \newpage
 \section{Conclusion}
-
+Dire qu'on s'est rendus compte en implémentant nos raffinements que c'était plus compliqué que le truc de base ? (et qu'elle nous l'a fait remarquer à la soutenance)
 
 
 \end{document}
