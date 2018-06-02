@@ -225,13 +225,75 @@ Ce scénario permet de tester le blocage d'un usager lorsqu'il rend un vélo apr
 \section{Deuxième raffinement}
 \subsection{Invariant de collage}
 \subsection{Modification des opérations}
+\newpage
 \section{Preuves}
-\subsection{Preuves de la machine abstraite}
-\subsection{Preuves du premier raffinement}
-\subsection{Preuves du deuxième raffinement}
+Nous allons nous intéresser ici à la prouvabilité de notre machine ainsi que ses raffinements. Pour cela, nous allons utiliser le prouveur du logiciel Atelier-B pour déterminer si elles sont correctes ou non.\\
+
+Pour l'ensemble des machines à tester, nous avons procédé comme suit :
+\begin{itemize}
+  \item vérification des types
+  \item générations des obligations de Preuve
+  \item preuves automatiques (force 0 et 1)
+  \item pour les obligations de preuve qui ne passent pas directement sous le prouveur d'Atelier-B, on passe en preuve intéractive et on applique :
+  \begin{itemize}
+    \item déduction (dd)
+    \item mini preuve (mp)
+    \item prouveur de prédicat (pp)
+  \end{itemize}
+\end{itemize}
+
+Dans l'ensemble, les résultats sont bons (voire très bons) et satisfaisants. Nous atteignons un pourcentage de réussite d'au moins 80 \% avec un nombe élevé d'obligations de preuve (voir les tableaux en fin de partie pour le détails des résultats du prouveur).\\
+
+Cependant, il reste encore quelques obligations de preuve à prouver. Malheureusement, dus à la compléxité des preuves ainsi qu'au temps qui nous manquait, nous n'avons pas pu les prouver. La plupart des preuves non prouvées étaient des preuves d'existence, qui ont été prouvé après soutenance. D'autres preuves, plus complexes, sont des preuves d'appartenance à un ensemble.
+\paragraph{Résumé de la machine abstraite}
+\begin{center}
+	\begin{tabular}{| l | c | r | r| r |}
+		\hline
+		Nom & Obligations de Preuve & Prouvé & Non-prouvé & Pourcentage de réussite \\ \hline
+		Velhop & 50 & 44 & 6 & 88\% \\ \hline
+	\end{tabular}
+\end{center}
+
+\paragraph{Résumé du premier raffinement}
+\begin{center}
+	\begin{tabular}{| l | c | r | r|r|}
+		\hline
+    Nom & Obligations de Preuve & Prouvé & Non-prouvé & Pourcentage de réussite\\ \hline
+    Velhop\_r\_users & 76 & 71 & 5 & 93\% \\ \hline
+	\end{tabular}
+\end{center}
+
+Par rapport à la soutenance, nous avons réussi à prouver 7 obligations de preuve supplémentaires : 
+\begin{itemize}
+  \item 1 obligation de preuve dans debloquer\_usager (PO4)
+  \item 5 obligations de preuve dans rendre (PO4, PO12, PO20, PO28, PO36)
+  \item 1 obligation de preuve dans deplacer\_velo (PO5)
+\end{itemize}
+
+Cela a permis de passer de 84\% à 93\% de réussite.
+
+\paragraph{Résumé du deuxième raffinement}
+\begin{center}
+	\begin{tabular}{| l | c | r | r|r|}
+		\hline
+		Nom & Obligations de Preuve & Prouvé & Non-prouvé & Pourcentage de réussite\\ \hline
+    Velhop\_r\_velo & 137 & 132 & 5 & 96\% \\ \hline
+	\end{tabular}
+\end{center}
+
+Par rapport à la soutenance, nous avons réussi à prouver 8 obligations de preuve supplémentaires : 
+\begin{itemize}
+  \item 7 obligations de preuve dans rendre (PO4, PO36, PO67, PO74, PO82, PO90, PO98)
+  \item 1 obligation de preuve dans deplacer\_velo (PO5)
+\end{itemize}
+
+Cela a permis de passer de 90\% à 96\% de réussite.
+
 \newpage
 \section{Conclusion}
+Pour conclure, nous avons réussi à spécifier une machine répondant au problème et étant fonctionnelle (prouvé par ProB et les scénarios qu'on a défini).
 
+De plus, le prouveur d'Atelier-B a délivré un bilan de prouvabilité satisfaisant avec seulement quelques preuves non prouvées.
 
 
 \end{document}
