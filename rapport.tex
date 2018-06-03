@@ -40,7 +40,7 @@
 \pagestyle{plain}
 \title{Projet MFDLS \\ Vélos en libre service}
 \author{Anthony Araye et Camille Schnell}
-\date{1 mars 2018}
+\date{28 mai 2018}
 \begin{document}
 \maketitle
 \newpage
@@ -50,10 +50,11 @@
 \section{Introduction}
 L'objectif de ce projet est de modéliser un système permettant à des utilisateurs d'emprunter des vélos en libre service. Ces vélos sont stockés dans plusieurs gares au sein d'une ville. \\
 
-Il s'agit ici de gérer l'ensemble des actions pouvant être effectuées par différentes personnes : des usagers ou des administrateurs du système. Nous avons ainsi modélisé des opérations afin qu'un administrateur puisse créer, supprimer ou débloquer un utilisateur et déplacer ou réparer des vélos ; les usagers pourront emprunter et rendre des vélos, à condition qu'ils ne soient pas bloqués. \\ \\
+Il s'agit ici de gérer l'ensemble des actions pouvant être effectuées par différentes personnes : des usagers ou des administrateurs du système. Nous avons ainsi modélisé des opérations afin qu'un administrateur puisse créer, supprimer ou débloquer un utilisateur et déplacer ou réparer des vélos ; les usagers pourront emprunter et rendre des vélos, à condition qu'ils ne soient pas bloqués. \\
+
+Nous allons pour cela créer une machine Velhop et la tester afin de répondre au problème posé, puis la raffiner avec pour objectif de simplifier une future implémentation. Afin de garantir la fiabilité de la machine et de ses raffinements, des obligations de preuves seront générées automatiquement. L'objectif sera alors de prouver toutes les obligations de preuves, avec l'aide des prouveurs automatique puis interactif proposés par l'AtelierB.\\
 \newpage
 \section{La machine abstraite}
-\textcolor{red}{\textbf{IL FAUT PRÉCISER DANS CETTE SECTION À CHAQUE FOIS QU'UNE PROPRIÉTÉ DU SUJET EST VÉRIFIÉE EN \\ LA CITANT (P1,P2,...)}}
 Notre machine abstraite, nommée sobrement Velhop, est caractérisée par différents ensembles, variables et opérations décrites dans les sous-parties ci-dessous.
 \subsection{Ensembles, variables et initialisation}
 \subsubsection{Ensembles et constantes}
@@ -76,8 +77,8 @@ Nous utilisons dans notre machine abstraite 4 variables :
 \begin{itemize}
   \item usagers : une fonction partielle de l'ensemble PERSONNE vers un élément de STATUT. Elle représente l'ensemble des utilisateurs du système Velhop.
   \item etatVelos : une fonction totale de l'ensemble velos vers l'ensemble ETATSVELO. Pour chaque vélo, on attribue un état afin de savoir si le vélo est utilisable ou non.
-  \item usagerVelo : une fonction partielle et injective du domaine de la fonction usager vers l'ensemble velos. Elle attribue pour un utilisateur un vélo. La fonction est partielle pour justifier la propriété 2. L'injectivité permet de définir le fait qu'un vélo ne peut être emprunté que par une seule personne.
-  \item gares : une fonction totale de l'ensemble gare à un ensemble de fonctions partielles de [|1,6|] vers l'ensemble velos. Cette fonction permet de lier pour chaque gare, un ensemble de 6 bornes pouvant contenir 0 ou 1 vélo. Elle respecte donc la propriété P1 du sujet.
+  \item usagerVelo : une fonction partielle et injective du domaine de la fonction usager vers l'ensemble velos. Elle attribue pour un utilisateur un vélo. La fonction est partielle pour justifier la propriété \textbf{P2}. L'injectivité permet de définir le fait qu'un vélo ne peut être emprunté que par une seule personne.
+  \item gares : une fonction totale de l'ensemble gare à un ensemble de fonctions partielles de [|1,6|] vers l'ensemble velos. Cette fonction permet de lier pour chaque gare, un ensemble de 6 bornes pouvant contenir 0 ou 1 vélo. Elle respecte donc la propriété \textbf{P1} du sujet.
 \end{itemize}
 
 En plus de ces variables (et de leurs invariants), on a ajouté un dernier invariant : %!g1.(g1 : dom(gares) => (!v1.(v1 : ran(gares(g1)) => (!g2.(g2 : dom(gares) & g2 /= g1 =>(v1 /: ran(gares(g2))))))))
@@ -101,18 +102,24 @@ Cette opération permet de créer un utilisateur dans notre système.
 
 La variable user doit apartenir à l'ensemble PERSONNES et doit également être dans le domaine de la fonction usagers.
 \paragraph{Corps de l'opération}
-\[ usagers := usagers \bigcup \{user \mapsto actif\} \]
+\[\]
+\begin{lstlisting}
+  usagers := usagers \bigcup \{user \mapsto actif\}
+\end{lstlisting}
 
 On ajoute à la variable usager le couple (user,actif).
 \subsubsection{\textit{supprimer\_usager(user)}}
 Cette opération permet de supprimer un utilisateur dans notre système.
 \paragraph{Préconditions}
-\[user \in PERSONNES \land user \in dom(usagers) \land usagers(user) \neq bloque \land user \neq dom(usagers) \]
+\[user \in PERSONNES \land user \in dom(usagers) \land usagers(user) \neq bloque \land user \neq dom(usagerVelo) \]
 
 \paragraph{Corps de l'opération}
-\[ usagers := \{ user \} <<| usagers \]
+\[\]
+\begin{lstlisting}
+  usagers := \{ user \} <<| usagers
+\end{lstlisting}
 
-On fait la soustraction de \{ user \} dans la variable usagers.
+On fait la soustraction de \{ user \} dans la variable usagers. Grâce à la précondition \[ user \neq dom(usagerVelo) \] on ne peut pas supprimer un usager s'il est en train d'utiliser un vélo (propriété \textbf{P3} du sujet).
 
 \subsubsection{\textit{debloquer\_usager(user)}}
 Cette opération permet de débloquer un utilisateur dans notre système.
@@ -120,18 +127,23 @@ Cette opération permet de débloquer un utilisateur dans notre système.
 \[ user \in PERSONNES \land user \in dom(usagers) \land usagers(user) = bloque \land user \neq dom(usagerVelo) \]
 
 \paragraph{Corps de l'opération}
-\[usagers := usagers \leftarrow \{user \mapsto actif\} \]
-
-On fait la surcharge de \{ user -> actif \} dans la variable usagers.
+\[\]
+\begin{lstlisting}
+  usagers := usagers \leftarrow \{user \mapsto actif\}
+\end{lstlisting}
+On fait la surcharge de \{ user -> actif \} dans la variable usagers. Grâce à la précondition \[ user \neq dom(usagerVelo) \] on ne peut pas débloquer un usager s'il est en train d'utiliser un vélo (propriété \textbf{P3} du sujet).
 \subsubsection{\textit{emprunter(user,vv,gg)}}
 Cette opération permet l'emprunt d'un vélo par un utilisateur dans notre système.
 \paragraph{Préconditions}
 \[ user \in PERSONNES \land user \in dom(usagers) \land usagers(user) \neq bloque \land user \neq dom(usagerVelo) \]\[\land vv \in velos \land gg \in gare \land vv \neq ran(usagerVelo) \land vv \in ran(gares(gg)) \land etatVelos(vv) = bon\_etat\]
 \paragraph{Corps de l'opération}
-	\[ usagerVelo := usagerVelo \bigcup \{user \mapsto vv\} ||
-gares(gg) := gares(gg) |>> \{vv\}\]
+\[\]
+\begin{lstlisting}
+  usagerVelo := usagerVelo \bigcup \{user \mapsto vv\} ||
+  gares(gg) := gares(gg) |>> \{vv\}
+\end{lstlisting}
 
-On ajoute à usagerVelo la relation \{ user -> vv \} et on soustrait à l'ensemble gares(gg) les relations dont l'image est vv.
+On ajoute à usagerVelo la relation \{ user -> vv \} et on soustrait à l'ensemble gares(gg) les relations dont l'image est vv. Grâce à la précondition \[ usagers(user) \neq bloque \] un usager bloqué ne peut pas emprunter de vélo (propriété \textbf{P4} du sujet). De plus, la précondition \[etatVelos(vv) = bon\_etat\] permet de s'assurer que seuls les vélos en bon\_etat peuvent être empruntés et respecte donc la propriété \textbf{P6} du sujet.
 \subsubsection{\textit{rendre(velo,gg,temps,etat)}}
 Cette opération permet le rendu d'un vélo par un utilisateur dans notre système.
 \paragraph{Préconditions}
@@ -149,7 +161,7 @@ Cette opération permet le rendu d'un vélo par un utilisateur dans notre systè
           END
       END
 \end{lstlisting}
-
+La condition \textit{IF temps > 60} permet de bloquer un utilisateur s'il a emprunté un vélo plus d'une heure (propriété \textbf{P5} du sujet).
 \subsubsection{\textit{deplacer\_velo(vv,gg)}}
 Cette opération permet le déplacement instantanée d'un vélo d'une gare à une autre dans notre système.
 \paragraph{Préconditions}
@@ -258,11 +270,77 @@ Ce scénario permet de tester le blocage d'un usager lorsqu'il rend un vélo apr
 \section{Premier raffinement}
 Le premier raffinement raffine la variable etatVelos en une variable etats, fonction totale de ETATSVELO dans FIN(velos). Pour chaque état (bon\_etat, use, abime), la fonction etats lui associe un ensemble de velos. Ainsi, l'ensemble des vélos en bon\_etat se traduira par \textit{etats(bon\_etat)}.
 \subsection{Invariant de collage}
+Pour ce premier raffinement, l'invariant de collage est le suivant : \\
+\[ etats : ETATSVELO --> FIN(velos) \land etatVelos\sim[{bon\_etat}] = etats(bon\_etat) \]
+\[ \land etatVelos\sim[{use}] = etats(use) \land etatVelos\sim[{abime}] = etats(abime) \]
+\[ \land usagers\_r = usagers \land usagerVelo\_r = usagerVelo \land gares\_r = gares \]
+En effet, pour un état \textit{e}, etats(e) doit correspondre à l'inverse de \textit{e} par la fonction etatsVelos de la machine Velhop.
 \subsection{Modification des opérations}
+Les principales modifications ont été faites dans les fonctions \textit{rendre} et \textit{reparer\_velo}. \\ \\
+Pour l'opération \textit{rendre(velo, gg, temps, etat)} :
+\paragraph{Préconditions}
+\[ velo \in velos \land gg \in gare \land velo \in ran(usagerVelo\_r) \land temps \in NAT1 \land etat \in ETATSVELO\]
+\paragraph{Corps de l'opération}
+\[\]
+\begin{lstlisting}
+  ANY xx WHERE xx : 1 .. 6 & xx /: dom(gares_r(gg)) THEN
+        usagerVelo_r := usagerVelo_r |>> {velo} ||
+        SELECT etat = use THEN
+            etats := {bon_etat |-> (etats(bon_etat) - {velo}), use |-> (etats(use) \/ {velo}), abime |-> etats(abime)}
+        WHEN etat = abime THEN
+            etats := {bon_etat |-> (etats(bon_etat) - {velo}), use |-> etats(use), abime |-> (etats(abime) \/ {velo})}
+        END ||
+        gares_r(gg) := gares_r(gg) \/ {xx |-> velo} ||
+        IF temps > 60 or etat = abime THEN
+            usagers_r := usagers_r <+ usagerVelo_r~[{velo}] * {bloque}
+        END
+  END
+\end{lstlisting} \\
+Si l'état du vélo rendu est \textit{abime} ou \textit{use}, on enlève l'élément \textit{velo} de l'ensemble bon\_etat et on l'ajoute au nouvel ensemble (use ou abime). On a pour cela utilisé un SELECT sur la variable \textit{etat}. \\ \\
+Pour l'opération \textit{reparer\_velo(velo)} :
+\paragraph{Préconditions}
+\[ velo \in velos \land etatVelos(velo) \neq etats(bon\_etat) \]
+\paragraph{Corps de l'opération}
+\[\]
+\begin{lstlisting}
+  etats := {bon_etat |-> (etats(bon_etat) \/ {velo}), use |-> (etats(use) - {velo}), abime |-> (etats(abime) - {velo})}
+\end{lstlisting}
+On enlève l'élément \textit{velo} aux ensembles use et abime, et on l'ajoute à l'ensemble bon\_etat.
 \newpage
 \section{Deuxième raffinement}
+Le deuxième raffinement raffine la variable usagers en une variable statuts, fonction injective de STATUT dans FIN(PERSONNES). Pour chacun des deux statuts actif ou bloque, la fonction status lui associe un ensemble de personnes. Ainsi, l'ensemble des usagers bloqués se traduira par \textit{status(bloque)}.
 \subsection{Invariant de collage}
+Pour ce deuxième raffinement, l'invariant de collage est le suivant : \\
+\[ statuts : STATUT >-> FIN(PERSONNES) \land statuts(actif) = usagers\sim[{actif}] \]
+\[ \land statuts(bloque) = usagers\sim[{bloque}] \]
+En effet, pour un statut \textit{s}, statuts(s) doit correspondre à l'inverse de \textit{s} par la fonction usagers de la machine Velhop.
 \subsection{Modification des opérations}
+Les principales modifications ont été effectuées dans les opérations de création/suppression/déblocage d’un utilisateur et dans l’opération rendre. \\ \\
+Par exemple, pour l'opération \textit{creer\_usager(user)} :
+\paragraph{Préconditions}
+\[user \in PERSONNES \land user \notin statuts(actif) \land user \notin statuts(bloque)\]
+\paragraph{Corps de l'opération}
+\[\]
+\begin{lstlisting}
+  statuts(actif) := statuts(actif) \/ {user}
+\end{lstlisting} \\
+\newpage
+Pour l'opération \textit{rendre(velo, gg, temps, etat)} :
+\paragraph{Préconditions}
+\[ velo \in velos \land gg \in gare \land velo \in ran(usagerVelo_r) \land temps \in NAT1 \land etat \in ETATSVELO\]
+\paragraph{Corps de l'opération}
+\[\]
+\begin{lstlisting}
+  ANY xx WHERE xx : 1 .. 6 & xx /: dom(gares_r(gg)) THEN
+        usagerVelo_r := usagerVelo_r |>> {velo} ||
+        etatVelos_r := etatVelos_r <+ { velo |-> etat } ||
+        gares_r(gg) := gares_r(gg) \/ {xx |-> velo} ||
+        IF temps > 60 or etat = abime THEN
+            statuts := {actif |-> (statuts(actif) - usagerVelo_r~[{velo}]),bloque |-> (statuts(bloque) \/ usagerVelo_r~[{velo}])}
+        END
+  END
+\end{lstlisting} \\
+On récupère l'usager ayant rendu le vélo avec \[usagerVelo\_r\sim[{velo}]\] et on l'ajoute à statuts(bloque) s'il a rendu le vélo trop tard ou en mauvais état.
 \newpage
 \section{Preuves}
 Nous allons nous intéresser ici à la prouvabilité de notre machine ainsi que ses raffinements. Pour cela, nous allons utiliser le prouveur du logiciel Atelier-B pour déterminer si elles sont correctes ou non.\\
@@ -271,8 +349,8 @@ Pour l'ensemble des machines à tester, nous avons procédé comme suit :
 \begin{itemize}
   \item vérification des types
   \item générations des obligations de Preuve
-  \item preuves automatiques (force 0 et 1)
-  \item pour les obligations de preuve qui ne passent pas directement sous le prouveur d'Atelier-B, on passe en preuve intéractive et on applique :
+  \item preuves automatiques
+  \item pour les obligations de preuve qui ne passent pas directement sous le prouveur d'Atelier-B, on passe en preuve interactive et on applique :
   \begin{itemize}
     \item déduction (dd)
     \item mini preuve (mp)
@@ -280,9 +358,9 @@ Pour l'ensemble des machines à tester, nous avons procédé comme suit :
   \end{itemize}
 \end{itemize}
 
-Dans l'ensemble, les résultats sont bons (voire très bons) et satisfaisants. Nous atteignons un pourcentage de réussite d'au moins 80 \% avec un nombe élevé d'obligations de preuve (voir les tableaux en fin de partie pour le détails des résultats du prouveur).\\
+Dans l'ensemble, les résultats sont bons (voire très bons) et satisfaisants. Nous atteignons un pourcentage de réussite d'au moins 80 \% avec un nombre élevé d'obligations de preuve (voir les tableaux en fin de partie pour le détails des résultats du prouveur).\\
 
-Cependant, il reste encore quelques obligations de preuve à prouver. Malheureusement, dus à la compléxité des preuves ainsi qu'au temps qui nous manquait, nous n'avons pas pu les prouver. La plupart des preuves non prouvées étaient des preuves d'existence, qui ont été prouvé après soutenance. D'autres preuves, plus complexes, sont des preuves d'appartenance à un ensemble.
+Cependant, il reste encore quelques obligations de preuve à prouver. Malheureusement, dus à la complzxité des preuves ainsi qu'au temps qui nous manquait, nous n'avons pas pu les prouver. La plupart des preuves non prouvées étaient des preuves d'existence, et certaines ont été prouvées après la soutenance. D'autres preuves, plus complexes, sont des preuves d'appartenance à un ensemble.
 \paragraph{Résumé de la machine abstraite}
 \begin{center}
 	\begin{tabular}{| l | c | r | r| r |}
@@ -301,7 +379,7 @@ Cependant, il reste encore quelques obligations de preuve à prouver. Malheureus
 	\end{tabular}
 \end{center}
 
-Par rapport à la soutenance, nous avons réussi à prouver 7 obligations de preuve supplémentaires : 
+Par rapport à la soutenance, nous avons réussi à prouver 7 obligations de preuve supplémentaires :
 \begin{itemize}
   \item 1 obligation de preuve dans debloquer\_usager (PO4)
   \item 5 obligations de preuve dans rendre (PO4, PO12, PO20, PO28, PO36)
@@ -319,7 +397,7 @@ Cela a permis de passer de 84\% à 93\% de réussite.
 	\end{tabular}
 \end{center}
 
-Par rapport à la soutenance, nous avons réussi à prouver 8 obligations de preuve supplémentaires : 
+Par rapport à la soutenance, nous avons réussi à prouver 8 obligations de preuve supplémentaires :
 \begin{itemize}
   \item 7 obligations de preuve dans rendre (PO4, PO36, PO67, PO74, PO82, PO90, PO98)
   \item 1 obligation de preuve dans deplacer\_velo (PO5)
@@ -329,9 +407,12 @@ Cela a permis de passer de 90\% à 96\% de réussite.
 
 \newpage
 \section{Conclusion}
-Pour conclure, nous avons réussi à spécifier une machine répondant au problème et étant fonctionnelle (prouvé par ProB et les scénarios qu'on a défini). Cependant, nos raffinements étaient plus compliqué que notre machine initiale, ce qui va à l'encontre du principe de raffinement.\\
 
-De plus, le prouveur d'Atelier-B a délivré un bilan de prouvabilité satisfaisant avec seulement quelques preuves non prouvées.
+Pour conclure, nous avons réussi à spécifier une machine répondant au problème posé et étant fonctionnelle. Nous l'avons en effet testée sur ProB grâce à différents scénarios que nous avons définis. \\
+
+Les deux raffinements sont également fonctionnels. Cependant, en appliquant les modifications nécessaires, nous avons remarqué que ces raffinements complexifiaient en fait notre machine initiale. Cette remarque nous a été faite durant la soutenance : nos raffinements vont à l'encontre du principe même de raffinement, qui est de simplifier la machine afin de se rapprocher d'une implémentation.\\
+
+Concernant la prouvabilité de notre machine et de nos deux raffinements, le prouveur d'Atelier-B a délivré un bilan de prouvabilité très satisfaisant avec seulement 16 obligations de preuve restées non prouvées sur 263 au total. Ces dernières sont particulièrement complexes à prouver, et ne l'ont pas été principalement par manque de temps.
 
 
 \end{document}
