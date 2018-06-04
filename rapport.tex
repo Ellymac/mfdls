@@ -188,27 +188,18 @@ Cette opération permet la réparation d'un vélo dans notre système.
 \end{lstlisting}
 \newpage
 \section{Scénarios de test}
-Voici quelques scénarios utilisés pour tester la machine abstraite Velhop. Après initialisation sur ProB, le résultat obtenu est le suivant : \\
-velos = \{1,2,3,4,5,6,7,8,9,10,11,12\};
-gare = \{1,2,3,4\}; \\
-etatVelos(1) = bon\_etat;
-etatVelos(2) = bon\_etat;
-etatVelos(3) = bon\_etat;
-etatVelos(4) = bon\_etat;
-etatVelos(5) = bon\_etat;
-etatVelos(6) = bon\_etat;
-etatVelos(7) = bon\_etat;
-etatVelos(8) = bon\_etat;
-etatVelos(9) = bon\_etat;
-etatVelos(10) = bon\_etat;
-etatVelos(11) = bon\_etat;
-etatVelos(12) = bon\_etat;  \\
-usagers = \{\};
-usagerVelo = \{\}; \\
-gares(1) = [1,2,3];
-gares(2) = [4,5,6];
-gares(3) = [7,8,9];
-gares(4) = [10,11,12];
+Voici quelques scénarios utilisés pour tester la machine abstraite Velhop. Après initialisation sur ProB, le résultat obtenu est le suivant :
+\begin{itemize}
+  \item velos = \{1,2,3,4,5,6,7,8,9,10,11,12\};
+  \item gare = \{1,2,3,4\};
+  \item $ \forall i \in [|1,12|], etatVelos(i) = bon\_etat;$
+  \item usagers = \{\};
+  \item usagerVelo = \{\};
+  \item gares(1) = [1,2,3];
+  \item gares(2) = [4,5,6];
+  \item gares(3) = [7,8,9];
+  \item gares(4) = [10,11,12];
+\end{itemize}
 \subsection{Premier scénario}
 Ce premier scénario permet de tester la création et suppression d'un usager ainsi que les opérations \textit{emprunter} et \textit{rendre} (sans blocage de l'usager).
 \begin{itemize}
