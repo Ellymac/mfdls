@@ -102,9 +102,9 @@ Cette opération permet de créer un utilisateur dans notre système.
 
 La variable user doit apartenir à l'ensemble PERSONNES et doit également être dans le domaine de la fonction usagers.
 \paragraph{Corps de l'opération}
-\[\]
-\begin{lstlisting}
-  usagers := usagers \bigcup \{user \mapsto actif\}
+\textbf{}
+\begin{lstlisting}[mathescape]
+  usagers := usagers $\bigcup$ {user $\mapsto$ actif}
 \end{lstlisting}
 
 On ajoute à la variable usager le couple (user,actif).
@@ -114,9 +114,9 @@ Cette opération permet de supprimer un utilisateur dans notre système.
 \[user \in PERSONNES \land user \in dom(usagers) \land usagers(user) \neq bloque \land user \neq dom(usagerVelo) \]
 
 \paragraph{Corps de l'opération}
-\[\]
-\begin{lstlisting}
-  usagers := \{ user \} <<| usagers
+\textbf{}
+\begin{lstlisting}[mathescape]
+  usagers := { user } $<<|$ usagers
 \end{lstlisting}
 
 On fait la soustraction de \{ user \} dans la variable usagers. Grâce à la précondition \[ user \neq dom(usagerVelo) \] on ne peut pas supprimer un usager s'il est en train d'utiliser un vélo (propriété \textbf{P3} du sujet).
@@ -127,37 +127,37 @@ Cette opération permet de débloquer un utilisateur dans notre système.
 \[ user \in PERSONNES \land user \in dom(usagers) \land usagers(user) = bloque \land user \neq dom(usagerVelo) \]
 
 \paragraph{Corps de l'opération}
-\[\]
-\begin{lstlisting}
-  usagers := usagers \leftarrow \{user \mapsto actif\}
+\textbf{}
+\begin{lstlisting}[mathescape]
+  usagers := usagers $\leftarrow$ {user $\mapsto$ actif}
 \end{lstlisting}
-On fait la surcharge de \{ user -> actif \} dans la variable usagers. Grâce à la précondition \[ user \neq dom(usagerVelo) \] on ne peut pas débloquer un usager s'il est en train d'utiliser un vélo (propriété \textbf{P3} du sujet).
+On fait la surcharge de \{ user $\mapsto$ actif \} dans la variable usagers. Grâce à la précondition \[ user \neq dom(usagerVelo) \] on ne peut pas débloquer un usager s'il est en train d'utiliser un vélo (propriété \textbf{P3} du sujet).
 \subsubsection{\textit{emprunter(user,vv,gg)}}
 Cette opération permet l'emprunt d'un vélo par un utilisateur dans notre système.
 \paragraph{Préconditions}
 \[ user \in PERSONNES \land user \in dom(usagers) \land usagers(user) \neq bloque \land user \neq dom(usagerVelo) \]\[\land vv \in velos \land gg \in gare \land vv \neq ran(usagerVelo) \land vv \in ran(gares(gg)) \land etatVelos(vv) = bon\_etat\]
 \paragraph{Corps de l'opération}
-\[\]
-\begin{lstlisting}
-  usagerVelo := usagerVelo \bigcup \{user \mapsto vv\} ||
-  gares(gg) := gares(gg) |>> \{vv\}
+\textbf{}
+\begin{lstlisting}[mathescape]
+  usagerVelo := usagerVelo $\bigcup$ {user $\mapsto$ vv} ||
+  gares(gg) := gares(gg) |>> {vv}
 \end{lstlisting}
 
-On ajoute à usagerVelo la relation \{ user -> vv \} et on soustrait à l'ensemble gares(gg) les relations dont l'image est vv. Grâce à la précondition \[ usagers(user) \neq bloque \] un usager bloqué ne peut pas emprunter de vélo (propriété \textbf{P4} du sujet). De plus, la précondition \[etatVelos(vv) = bon\_etat\] permet de s'assurer que seuls les vélos en bon\_etat peuvent être empruntés et respecte donc la propriété \textbf{P6} du sujet.
+On ajoute à usagerVelo la relation \{ user $\mapsto$ vv \} et on soustrait à l'ensemble gares(gg) les relations dont l'image est vv. Grâce à la précondition \[ usagers(user) \neq bloque \] un usager bloqué ne peut pas emprunter de vélo (propriété \textbf{P4} du sujet). De plus, la précondition \[etatVelos(vv) = bon\_etat\] permet de s'assurer que seuls les vélos en bon\_etat peuvent être empruntés et respecte donc la propriété \textbf{P6} du sujet.
 \subsubsection{\textit{rendre(velo,gg,temps,etat)}}
 Cette opération permet le rendu d'un vélo par un utilisateur dans notre système.
 \paragraph{Préconditions}
 \[ velo \in velos \land gg \in gare \land velo \in ran(usagerVelo) \land temps \in NAT1 \land etat \in ETATSVELO\]
 
 \paragraph{Corps de l'opération}
-\[\]
-\begin{lstlisting}
-      ANY xx WHERE xx : 1 .. 6 & xx /: dom(gares(gg)) THEN
+\textbf{}
+\begin{lstlisting}[mathescape]
+      ANY xx WHERE xx $\in$ 1 .. 6 & xx $\notin$ dom(gares(gg)) THEN
           usagerVelo := usagerVelo |>> {velo} ||
-          etatVelos := etatVelos <+ { velo |-> etat } ||
-          gares(gg) := gares(gg) \/ {xx |-> velo} ||
+          etatVelos := etatVelos $\leftarrow$ { velo $\mapsto$ etat } ||
+          gares(gg) := gares(gg) $\bigcup$ {xx $\mapsto$ velo} ||
           IF temps > 60 or etat = abime THEN
-              usagers := usagers <+ usagerVelo~[{velo}] * {bloque}
+              usagers := usagers $\leftarrow$ usagerVelo~[{velo}] * {bloque}
           END
       END
 \end{lstlisting}
@@ -168,11 +168,11 @@ Cette opération permet le déplacement instantanée d'un vélo d'une gare à un
 \[ vv \in velos \land gg \in gare \land etatVelos(vv) = bon\_etat \land card(gares(gg))<6 \]
 \[\land vv \notin ran(gares(gg)) \land vv \notin ran(usagerVelo)\]
 \paragraph{Corps de l'opération}
-\[\]
-\begin{lstlisting}
-      ANY ggg WHERE ggg : gare & vv : ran(gares(ggg)) THEN
-          ANY xx WHERE xx : 1 .. 6 & xx /: dom(gares(gg)) THEN
-              gares := gares <+ {ggg |-> (gares(ggg) |>> {vv}), gg |-> (gares(gg) \/ {xx |-> vv})}
+\textbf{}
+\begin{lstlisting}[mathescape]
+      ANY ggg WHERE ggg $\in$ gare & vv $\in$ ran(gares(ggg)) THEN
+          ANY xx WHERE xx $\in$ 1 .. 6 & xx $\notin$ dom(gares(gg)) THEN
+              gares := gares $\leftarrow$ {ggg $\mapsto$ (gares(ggg) |>> {vv}), gg $\mapsto$ (gares(gg) $\bigcup$ {xx $\mapsto$ vv})}
           END
       END
 \end{lstlisting}
@@ -182,8 +182,8 @@ Cette opération permet la réparation d'un vélo dans notre système.
 \paragraph{Préconditions}
 \[ velo \in velos \land etatVelos(velo) \neq bon\_etat \]
 \paragraph{Corps de l'opération}
-\[\]
-\begin{lstlisting}
+\textbf{}
+\begin{lstlisting}[mathescape]
   etatVelos(velo) := bon_etat
 \end{lstlisting}
 \newpage
@@ -295,7 +295,7 @@ Pour l'opération \textit{rendre(velo, gg, temps, etat)} :
             usagers_r := usagers_r <+ usagerVelo_r~[{velo}] * {bloque}
         END
   END
-\end{lstlisting} \\
+\end{lstlisting}
 Si l'état du vélo rendu est \textit{abime} ou \textit{use}, on enlève l'élément \textit{velo} de l'ensemble bon\_etat et on l'ajoute au nouvel ensemble (use ou abime). On a pour cela utilisé un SELECT sur la variable \textit{etat}. \\ \\
 Pour l'opération \textit{reparer\_velo(velo)} :
 \paragraph{Préconditions}
@@ -323,7 +323,7 @@ Par exemple, pour l'opération \textit{creer\_usager(user)} :
 \[\]
 \begin{lstlisting}
   statuts(actif) := statuts(actif) \/ {user}
-\end{lstlisting} \\
+\end{lstlisting}
 \newpage
 Pour l'opération \textit{rendre(velo, gg, temps, etat)} :
 \paragraph{Préconditions}
@@ -339,7 +339,7 @@ Pour l'opération \textit{rendre(velo, gg, temps, etat)} :
             statuts := {actif |-> (statuts(actif) - usagerVelo_r~[{velo}]),bloque |-> (statuts(bloque) \/ usagerVelo_r~[{velo}])}
         END
   END
-\end{lstlisting} \\
+\end{lstlisting}
 On récupère l'usager ayant rendu le vélo avec \[usagerVelo\_r\sim[{velo}]\] et on l'ajoute à statuts(bloque) s'il a rendu le vélo trop tard ou en mauvais état.
 \newpage
 \section{Preuves}
