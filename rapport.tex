@@ -262,7 +262,7 @@ Ce scénario permet de tester le blocage d'un usager lorsqu'il rend un vélo apr
 Le premier raffinement raffine la variable etatVelos en une variable etats, fonction totale de ETATSVELO dans FIN(velos). Pour chaque état (bon\_etat, use, abime), la fonction etats lui associe un ensemble de velos. Ainsi, l'ensemble des vélos en bon\_etat se traduira par \textit{etats(bon\_etat)}.
 \subsection{Invariant de collage}
 Pour ce premier raffinement, l'invariant de collage est le suivant : \\
-\[ etats : ETATSVELO --> FIN(velos) \land etatVelos\sim[{bon\_etat}] = etats(bon\_etat) \]
+\[ etats \in ETATSVELO \rightarrow FIN(velos) \land etatVelos\sim[{bon\_etat}] = etats(bon\_etat) \]
 \[ \land etatVelos\sim[{use}] = etats(use) \land etatVelos\sim[{abime}] = etats(abime) \]
 \[ \land usagers\_r = usagers \land usagerVelo\_r = usagerVelo \land gares\_r = gares \]
 En effet, pour un état \textit{e}, etats(e) doit correspondre à l'inverse de \textit{e} par la fonction etatsVelos de la machine Velhop.
@@ -272,18 +272,18 @@ Pour l'opération \textit{rendre(velo, gg, temps, etat)} :
 \paragraph{Préconditions}
 \[ velo \in velos \land gg \in gare \land velo \in ran(usagerVelo\_r) \land temps \in NAT1 \land etat \in ETATSVELO\]
 \paragraph{Corps de l'opération}
-\[\]
-\begin{lstlisting}
-  ANY xx WHERE xx : 1 .. 6 & xx /: dom(gares_r(gg)) THEN
+\textbf{}
+\begin{lstlisting}[mathescape]
+  ANY xx WHERE xx $\in$ 1 .. 6 & xx $\notin$ dom(gares_r(gg)) THEN
         usagerVelo_r := usagerVelo_r |>> {velo} ||
         SELECT etat = use THEN
-            etats := {bon_etat |-> (etats(bon_etat) - {velo}), use |-> (etats(use) \/ {velo}), abime |-> etats(abime)}
+            etats := {bon_etat $\mapsto$ (etats(bon_etat) - {velo}), use $\mapsto$ (etats(use) $\bigcup$ {velo}), abime $\mapsto$ etats(abime)}
         WHEN etat = abime THEN
-            etats := {bon_etat |-> (etats(bon_etat) - {velo}), use |-> etats(use), abime |-> (etats(abime) \/ {velo})}
+            etats := {bon_etat $\mapsto$ (etats(bon_etat) - {velo}), use $\mapsto$ etats(use), abime $\mapsto$ (etats(abime) $\bigcup$ {velo})}
         END ||
-        gares_r(gg) := gares_r(gg) \/ {xx |-> velo} ||
+        gares_r(gg) := gares_r(gg) $\bigcup$ {xx $\mapsto$ velo} ||
         IF temps > 60 or etat = abime THEN
-            usagers_r := usagers_r <+ usagerVelo_r~[{velo}] * {bloque}
+            usagers_r := usagers_r $\leftarrow$ usagerVelo_r~[{velo}] * {bloque}
         END
   END
 \end{lstlisting}
@@ -292,42 +292,42 @@ Pour l'opération \textit{reparer\_velo(velo)} :
 \paragraph{Préconditions}
 \[ velo \in velos \land etatVelos(velo) \neq etats(bon\_etat) \]
 \paragraph{Corps de l'opération}
-\[\]
-\begin{lstlisting}
-  etats := {bon_etat |-> (etats(bon_etat) \/ {velo}), use |-> (etats(use) - {velo}), abime |-> (etats(abime) - {velo})}
+\textbf{}
+\begin{lstlisting}[mathescape]
+  etats := {bon_etat $\mapsto$ (etats(bon_etat) $\bigcup$ {velo}), use $\mapsto$ (etats(use) - {velo}), abime $\mapsto$ (etats(abime) - {velo})}
 \end{lstlisting}
 On enlève l'élément \textit{velo} aux ensembles use et abime, et on l'ajoute à l'ensemble bon\_etat.
 \newpage
 \section{Deuxième raffinement}
-Le deuxième raffinement raffine la variable usagers en une variable statuts, fonction injective de STATUT dans FIN(PERSONNES). Pour chacun des deux statuts actif ou bloque, la fonction status lui associe un ensemble de personnes. Ainsi, l'ensemble des usagers bloqués se traduira par \textit{status(bloque)}.
+Le deuxième raffinement raffine la variable usagers en une variable statuts, fonction injective de STATUT dans FIN(PERSONNES). Pour chacun des deux statuts actif ou bloque, la fonction statuts lui associe un ensemble de personnes. Ainsi, l'ensemble des usagers bloqués se traduira par \textit{statuts(bloque)}.
 \subsection{Invariant de collage}
 Pour ce deuxième raffinement, l'invariant de collage est le suivant : \\
-\[ statuts : STATUT >-> FIN(PERSONNES) \land statuts(actif) = usagers\sim[{actif}] \]
+\[ statuts \in STATUT >\rightarrow FIN(PERSONNES) \land statuts(actif) = usagers\sim[{actif}] \]
 \[ \land statuts(bloque) = usagers\sim[{bloque}] \]
 En effet, pour un statut \textit{s}, statuts(s) doit correspondre à l'inverse de \textit{s} par la fonction usagers de la machine Velhop.
 \subsection{Modification des opérations}
 Les principales modifications ont été effectuées dans les opérations de création/suppression/déblocage d’un utilisateur et dans l’opération rendre. \\ \\
-Par exemple, pour l'opération \textit{creer\_usager(user)} :
+Par exemple, pour l'opération \textit{creer\_usager} :
 \paragraph{Préconditions}
 \[user \in PERSONNES \land user \notin statuts(actif) \land user \notin statuts(bloque)\]
 \paragraph{Corps de l'opération}
-\[\]
-\begin{lstlisting}
-  statuts(actif) := statuts(actif) \/ {user}
+\textbf{}
+\begin{lstlisting}[mathescape]
+  statuts(actif) := statuts(actif) $\bigcup$ {user}
 \end{lstlisting}
 \newpage
 Pour l'opération \textit{rendre(velo, gg, temps, etat)} :
 \paragraph{Préconditions}
 \[ velo \in velos \land gg \in gare \land velo \in ran(usagerVelo_r) \land temps \in NAT1 \land etat \in ETATSVELO\]
 \paragraph{Corps de l'opération}
-\[\]
-\begin{lstlisting}
-  ANY xx WHERE xx : 1 .. 6 & xx /: dom(gares_r(gg)) THEN
+\textbf{}
+\begin{lstlisting}[mathescape]
+  ANY xx WHERE xx $\in$ 1 .. 6 & xx $\notin$ dom(gares_r(gg)) THEN
         usagerVelo_r := usagerVelo_r |>> {velo} ||
-        etatVelos_r := etatVelos_r <+ { velo |-> etat } ||
-        gares_r(gg) := gares_r(gg) \/ {xx |-> velo} ||
+        etatVelos_r := etatVelos_r $\leftarrow$ { velo $\mapsto$ etat } ||
+        gares_r(gg) := gares_r(gg) $\bigcup$ {xx $\mapsto$ velo} ||
         IF temps > 60 or etat = abime THEN
-            statuts := {actif |-> (statuts(actif) - usagerVelo_r~[{velo}]),bloque |-> (statuts(bloque) \/ usagerVelo_r~[{velo}])}
+            statuts := {actif $\mapsto$ (statuts(actif) - usagerVelo_r~[{velo}]),bloque $\mapsto$ (statuts(bloque) $\bigcup$ usagerVelo_r~[{velo}])}
         END
   END
 \end{lstlisting}
