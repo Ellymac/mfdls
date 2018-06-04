@@ -50,9 +50,13 @@
 \section{Introduction}
 L'objectif de ce projet est de modéliser un système permettant à des utilisateurs d'emprunter des vélos en libre service. Ces vélos sont stockés dans plusieurs gares au sein d'une ville. \\
 
-Il s'agit ici de gérer l'ensemble des actions pouvant être effectuées par différentes personnes : des usagers ou des administrateurs du système. Nous avons ainsi modélisé des opérations afin qu'un administrateur puisse créer, supprimer ou débloquer un utilisateur et déplacer ou réparer des vélos ; les usagers pourront emprunter et rendre des vélos, à condition qu'ils ne soient pas bloqués. \\
+Il s'agit ici de gérer l'ensemble des actions pouvant être effectuées par différentes personnes : des usagers ou des administrateurs du système. Nous avons ainsi modélisé des opérations afin :
+\begin{itemize}
+  \item qu'un administrateur puisse créer, supprimer ou débloquer un utilisateur ainsi que déplacer ou réparer des vélos,
+  \item que les usagers puissent emprunter et rendre des vélos, à condition qu'ils ne soient pas bloqués.
+\end{itemize}
 
-Nous allons pour cela créer une machine Velhop et la tester afin de répondre au problème posé, puis la raffiner avec pour objectif de simplifier une future implémentation. Afin de garantir la fiabilité de la machine et de ses raffinements, des obligations de preuves seront générées automatiquement. L'objectif sera alors de prouver toutes les obligations de preuves, avec l'aide des prouveurs automatique puis interactif proposés par l'AtelierB.\\
+Nous allons pour cela créer une machine nommée Velhop et la tester afin de répondre au problème posé, puis nous allons la raffiner avec pour objectif de simplifier une future implémentation. Afin de garantir la fiabilité de la machine et de ses raffinements, des obligations de preuves seront générées automatiquement. L'objectif sera alors de prouver toutes les obligations de preuves, avec l'aide des prouveurs automatique puis interactif proposés par l'Atelier B.\\
 \newpage
 \section{La machine abstraite}
 Notre machine abstraite, nommée sobrement Velhop, est caractérisée par différents ensembles, variables et opérations décrites dans les sous-parties ci-dessous.
