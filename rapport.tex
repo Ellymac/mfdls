@@ -64,25 +64,25 @@ Notre machine abstraite, nommée sobrement Velhop, est caractérisée par diffé
 \subsubsection{Ensembles et constantes}
 Dans notre machine, nous implémentons deux constantes :
 \begin{itemize}
-  \item velos : un ensemble entre 1 et 12 représentant les 12 vélos du problème.
-  \item gare : un ensemble entre 1 et 4 représentant les 4 gares du problème.
+  \item \textit{\textbf{velos}} : un ensemble entre 1 et 12 représentant les 12 vélos du problème.
+  \item \textit{\textbf{gare}} : un ensemble entre 1 et 4 représentant les 4 gares du problème.
 \end{itemize}
 
 De plus, nous introduisons plusieurs ensembles :
 \begin{itemize}
-  \item PERSONNES : un ensemble représentant les personnes.
-  \item ETATSVELO : un ensemble représentant l'état que peut avoir un vélo (où ETATS\_VELO = \{bon\_etat, use, abime\})
-  \item STATUT : un ensemble représentant l'état d'un compte (où STATUT = \{actif, bloque\}).
+  \item \textit{\textbf{PERSONNES}} : un ensemble représentant les personnes.
+  \item \textit{\textbf{ETATSVELO}} : un ensemble représentant l'état que peut avoir un vélo (où ETATSVELO = \{bon\_etat, use, abime\})
+  \item \textit{\textbf{STATUT}} : un ensemble représentant l'état d'un compte (où STATUT = \{actif, bloque\}).
 \end{itemize}
 \subsubsection{Variables et invariant}
 Grâce aux ensembles définis par nos soins, nous allons pouvoir définir des variables et des invariants afin de spécifier notre machine.\\
 
 Nous utilisons dans notre machine abstraite 4 variables :
 \begin{itemize}
-  \item usagers : une fonction partielle de l'ensemble PERSONNES vers un élément de STATUT. Elle représente l'ensemble des utilisateurs du système Velhop.
-  \item etatVelos : une fonction totale de l'ensemble velos vers l'ensemble ETATSVELO. Pour chaque vélo, on attribue un état afin de savoir si le vélo est utilisable ou non.
-  \item usagerVelo : une fonction partielle et injective du domaine de la fonction usager vers l'ensemble velos. Elle attribue pour un utilisateur un vélo qu'il a emprunté. La fonction est partielle pour justifier la propriété \textbf{P2}. L'injectivité permet de définir le fait qu'un vélo ne peut être emprunté que par une seule personne.
-  \item gares : une fonction totale de l'ensemble gare à un ensemble de fonctions partielles de [|1,6|] vers l'ensemble velos. Cette fonction permet de lier pour chaque gare, un ensemble de 6 bornes pouvant contenir 0 ou 1 vélo. Elle respecte donc la propriété \textbf{P1} du sujet.
+  \item \textit{\textbf{usagers}} : une fonction partielle de l'ensemble \textit{\textbf{PERSONNES}} vers un élément de \textit{\textbf{STATUT}}. Elle représente l'ensemble des utilisateurs du système Velhop.
+  \item \textit{\textbf{etatVelos}} : une fonction totale de l'ensemble \textit{\textbf{velos}} vers l'ensemble \textit{\textbf{ETATSVELO}}. Pour chaque vélo, on attribue un état afin de savoir si le vélo est utilisable ou non.
+  \item \textit{\textbf{usagerVelo}} : une fonction partielle et injective du domaine de la fonction \textit{\textbf{usagers}} vers l'ensemble \textit{\textbf{velos}}. Elle attribue pour un utilisateur un vélo qu'il a emprunté. La fonction est partielle pour justifier la propriété \textbf{P2}. L'injectivité permet de définir le fait qu'un vélo ne peut être emprunté que par une seule personne.
+  \item \textit{\textbf{gares}} : une fonction totale de l'ensemble \textit{\textbf{gare}} à un ensemble de fonctions partielles de [|1,6|] vers l'ensemble \textit{\textbf{velos}}. Cette fonction permet de lier pour chaque gare, un ensemble de 6 bornes pouvant contenir 0 ou 1 vélo. Elle respecte donc la propriété \textbf{P1} du sujet.
 \end{itemize}
 
 En plus de ces variables (et de leurs invariants), on a ajouté un dernier invariant : %!g1.(g1 : dom(gares) => (!v1.(v1 : ran(gares(g1)) => (!g2.(g2 : dom(gares) & g2 /= g1 =>(v1 /: ran(gares(g2))))))))
@@ -109,7 +109,7 @@ Cette opération permet de créer un utilisateur dans notre système.
   usagers := usagers $\bigcup$ {user $\mapsto$ actif}
 \end{lstlisting}
 
-On ajoute à la variable usagers le couple (user,actif).
+On ajoute à la variable \textit{\textbf{usagers}} le couple (user,actif).
 \subsubsection{\textit{supprimer\_usager(user)}}
 Cette opération permet de supprimer un utilisateur dans notre système.
 \paragraph{Préconditions}
@@ -121,7 +121,9 @@ Cette opération permet de supprimer un utilisateur dans notre système.
   usagers := { user } $<<|$ usagers
 \end{lstlisting}
 
-On fait la soustraction de \{ user \} dans la variable usagers. Grâce à la précondition \[ user \neq dom(usagerVelo) \] on ne peut pas supprimer un usager s'il est en train d'utiliser un vélo (propriété \textbf{P3} du sujet).
+On fait la soustraction de \{ user \} dans la variable \textit{\textbf{usagers}}. \\
+
+Grâce à la précondition "$user \neq dom(usagerVelo)$", on ne peut pas supprimer un usager s'il est en train d'utiliser un vélo (propriété \textbf{P3} du sujet).
 
 \subsubsection{\textit{debloquer\_usager(user)}}
 Cette opération permet de débloquer un utilisateur dans notre système.
@@ -133,7 +135,10 @@ Cette opération permet de débloquer un utilisateur dans notre système.
 \begin{lstlisting}[mathescape]
   usagers := usagers $\leftarrow$ {user $\mapsto$ actif}
 \end{lstlisting}
-On fait la surcharge de \{ user $\mapsto$ actif \} dans la variable usagers. Grâce à la précondition \[ user \neq dom(usagerVelo) \] on ne peut pas débloquer un usager s'il est en train d'utiliser un vélo (propriété \textbf{P3} du sujet).
+
+On fait la surcharge de \{ user $\mapsto$ actif \} dans la variable \textit{\textbf{usagers}}.\\
+
+Grâce à la précondition "$user \neq dom(usagerVelo)$", on ne peut pas débloquer un usager s'il est en train d'utiliser un vélo (propriété \textbf{P3} du sujet).
 \subsubsection{\textit{emprunter(user,vv,gg)}}
 Cette opération permet l'emprunt d'un vélo par un utilisateur dans notre système.
 \paragraph{Préconditions}
@@ -145,7 +150,11 @@ Cette opération permet l'emprunt d'un vélo par un utilisateur dans notre syst�
   gares(gg) := gares(gg) |>> {vv}
 \end{lstlisting}
 
-On ajoute à usagerVelo la relation \{ user $\mapsto$ vv \} et on soustrait à l'ensemble gares(gg) les relations dont l'image est vv. Grâce à la précondition \[ usagers(user) \neq bloque \] un usager bloqué ne peut pas emprunter de vélo (propriété \textbf{P4} du sujet). De plus, la précondition \[etatVelos(vv) = bon\_etat\] permet de s'assurer que seuls les vélos en bon\_etat peuvent être empruntés et respecte donc la propriété \textbf{P6} du sujet.
+On ajoute à \textit{\textbf{usagerVelo}} la relation \{ user $\mapsto$ vv \} et on soustrait à l'ensemble \textit{\textbf{gares(gg)}} les relations dont l'image est vv.\\
+
+Grâce à la précondition "$usagers(user) \neq bloque$" un usager bloqué ne peut pas emprunter de vélo (propriété \textbf{P4} du sujet).\\
+
+De plus, la précondition "$etatVelos(vv) = bon\_etat$" permet de s'assurer que seuls les vélos en bon état peuvent être empruntés et respecte donc la propriété \textbf{P6} du sujet.
 \subsubsection{\textit{rendre(velo,gg,temps,etat)}}
 Cette opération permet le rendu d'un vélo par un utilisateur dans notre système.
 \paragraph{Préconditions}
@@ -163,7 +172,7 @@ Cette opération permet le rendu d'un vélo par un utilisateur dans notre systè
           END
       END
 \end{lstlisting}
-La condition \textit{IF temps > 60} permet de bloquer un utilisateur s'il a emprunté un vélo plus d'une heure (propriété \textbf{P5} du sujet).
+La condition \textit{\textbf{IF temps > 60}} permet de bloquer un utilisateur s'il a emprunté un vélo plus d'une heure (propriété \textbf{P5} du sujet).
 \subsubsection{\textit{deplacer\_velo(vv,gg)}}
 Cette opération permet le déplacement instantanée d'un vélo d'une gare à une autre dans notre système.
 \paragraph{Préconditions}
@@ -203,7 +212,7 @@ Voici quelques scénarios utilisés pour tester la machine abstraite Velhop. Apr
   \item gares(4) = [10,11,12];
 \end{itemize}
 \subsection{Premier scénario}
-Ce premier scénario permet de tester la création et la suppression d'un usager ainsi que les opérations \textit{emprunter} et \textit{rendre} (sans blocage de l'usager).
+Ce premier scénario permet de tester la création et la suppression d'un usager ainsi que les opérations \textit{\textbf{emprunter}} et \textit{\textbf{rendre}} (sans blocage de l'usager).
 \begin{itemize}
   \item Initialisation
   \item Création d'un utilisateur 1 \\
@@ -216,7 +225,7 @@ Ce premier scénario permet de tester la création et la suppression d'un usager
   $\Rightarrow$ \textit{usagers = \{\}}
 \end{itemize}
 \subsection{Deuxième scénario}
-Ce scénario permet de tester le blocage d'un usager lorsqu'il rend un vélo abimé, le déblocage d'un utilisateur et l'opération \textit{réparer} : l'utilisateur débloqué peut emprunter le vélo réparé.
+Ce scénario permet de tester le blocage d'un usager lorsqu'il rend un vélo abimé, le déblocage d'un utilisateur et l'opération \textit{\textbf{reparer\_velo}} : l'utilisateur débloqué peut emprunter le vélo réparé.
 \begin{itemize}
   \item Initialisation
   \item Création d'un utilisateur 1 \\
@@ -237,7 +246,7 @@ Ce scénario permet de tester le blocage d'un usager lorsqu'il rend un vélo abi
   $\Rightarrow$ \textit{usagers = \{\}}
 \end{itemize}
 \subsection{Troisième scénario}
-Ce scénario permet de tester le blocage d'un usager lorsqu'il rend un vélo après l'avoir utilisé plus de 60 minutes, ainsi que l'opération \textit{déplacer} : un utilisateur peut emprunter un vélo dans la gare 1 après que l'administrateur y ait déplacé ce dernier.
+Ce scénario permet de tester le blocage d'un usager lorsqu'il rend un vélo après l'avoir utilisé plus de 60 minutes, ainsi que l'opération \textit{\textbf{deplacer\_velo}} : un utilisateur peut emprunter un vélo dans la gare 1 après que l'administrateur y ait déplacé ce dernier.
 \begin{itemize}
   \item Initialisation
   \item Création d'un utilisateur 1 \\
@@ -261,18 +270,18 @@ Ce scénario permet de tester le blocage d'un usager lorsqu'il rend un vélo apr
 \end{itemize}
 \newpage
 \section{Premier raffinement}
-Le premier raffinement raffine la variable etatVelos en une variable etats, fonction totale de ETATSVELO dans $\mathcal{P}$(velos). Pour chaque état (bon\_etat, use ou abime), la fonction etats lui associe un ensemble de velos. Ainsi, l'ensemble des vélos en bon\_etat se traduira par \textit{etats(bon\_etat)}.
+Le premier raffinement raffine la variable \textit{\textbf{etatVelos}} en une variable \textit{\textbf{etats}}, fonction totale de \textit{\textbf{ETATSVELO}} dans \textit{\textbf{$\mathcal{P}$(velos)}}. Pour chaque état (\textit{\textbf{bon\_etat}}, \textit{\textbf{use}} ou \textit{\textbf{abime}}), la fonction \textit{\textbf{etats}} lui associe un ensemble de vélos. Ainsi, l'ensemble des vélos en bon état se traduira par \textit{\textbf{etats(bon\_etat)}}.
 \subsection{Invariant de collage}
 Pour ce premier raffinement, l'invariant de collage est le suivant : \\
 \[ etats \in ETATSVELO \rightarrow \mathcal{P}(velos) \land etatVelos\sim[{bon\_etat}] = etats(bon\_etat) \]
 \[ \land etatVelos\sim[{use}] = etats(use) \land etatVelos\sim[{abime}] = etats(abime) \]
 \[ \land usagers\_r = usagers \land usagerVelo\_r = usagerVelo \land gares\_r = gares \]
 
-En effet, pour un état \textit{e}, etats(e) doit correspondre à l'inverse de \textit{e} par la fonction etatVelos de la machine Velhop.
+En effet, pour un état \textit{\textbf{e}}, \textit{\textbf{etats(e)}} doit correspondre à l'inverse de \textit{\textbf{e}} par la fonction \textit{\textbf{etatVelos}} de la machine Velhop.
 \subsection{Modification des opérations}
-Les principales modifications ont été faites dans les fonctions \textit{rendre} et \textit{reparer\_velo}. \\
+Les principales modifications ont été faites dans les fonctions \textit{\textbf{rendre}} et \textit{\textbf{reparer\_velo}}. \\
 
-Pour l'opération \textit{rendre(velo, gg, temps, etat)} :
+Pour l'opération \textit{\textbf{rendre(velo, gg, temps, etat)}} :
 \paragraph{Préconditions}
 \[ velo \in velos \land gg \in gare \land velo \in ran(usagerVelo\_r) \land temps \in NAT1 \land etat \in ETATSVELO\]
 \paragraph{Corps de l'opération}
@@ -292,9 +301,9 @@ Pour l'opération \textit{rendre(velo, gg, temps, etat)} :
   END
 \end{lstlisting}
 
-Si l'état du vélo rendu est \textit{abime} ou \textit{use}, on enlève l'élément \textit{velo} de l'ensemble lié à l'état bon\_etat et on l'ajoute au nouvel ensemble (lié à use ou abime). On a pour cela utilisé un SELECT sur la variable \textit{etat}. \\
+Si l'état du vélo rendu est \textit{\textbf{abime}} ou \textit{\textbf{use}}, on enlève l'élément \textit{velo} de l'ensemble lié à l'état \textit{\textbf{bon\_etat}} et on l'ajoute au nouvel ensemble (lié à \textit{\textbf{abime}} ou \textit{\textbf{use}}). On a pour cela utilisé un SELECT sur la variable \textit{etat}. \\
 
-Pour l'opération \textit{reparer\_velo(velo)} :
+Pour l'opération \textit{\textbf{reparer\_velo(velo)}} :
 \paragraph{Préconditions}
 \[ velo \in velos \land etatVelos(velo) \neq etats(bon\_etat) \]
 \paragraph{Corps de l'opération}
@@ -302,20 +311,21 @@ Pour l'opération \textit{reparer\_velo(velo)} :
 \begin{lstlisting}[mathescape]
   etats := {bon_etat $\mapsto$ (etats(bon_etat) $\bigcup$ {velo}), use $\mapsto$ (etats(use) - {velo}), abime $\mapsto$ (etats(abime) - {velo})}
 \end{lstlisting}
-On enlève l'élément \textit{velo} aux ensembles liés aux états use et abime, et on l'ajoute à l'ensemble lié à l'état bon\_etat.
+
+On enlève l'élément \textit{velo} aux ensembles liés aux états \textit{\textbf{use}} et \textit{\textbf{abime}}, et on l'ajoute à l'ensemble lié à l'état \textit{\textbf{bon\_etat}}.
 \newpage
 \section{Deuxième raffinement}
-Le deuxième raffinement raffine la variable usagers en une variable statuts, fonction totale et injective de STATUT dans $\mathcal{P}$(PERSONNES). Pour chacun des deux statuts actif ou bloque, la fonction statuts lui associe un ensemble de personnes. Ainsi, l'ensemble des usagers bloqués se traduira par \textit{statuts(bloque)}.
+Le deuxième raffinement raffine la variable \textit{\textbf{usagers}} en une variable \textit{\textbf{statuts}}, fonction totale et injective de \textit{\textbf{STATUT}} dans \textit{\textbf{$\mathcal{P}$(PERSONNES)}}. Pour chacun des deux statuts \textit{\textbf{actif}} ou \textit{\textbf{bloque}}, la fonction \textit{\textbf{statuts}} lui associe un ensemble de personnes. Ainsi, l'ensemble des usagers bloqués se traduira par \textit{\textbf{statuts(bloque)}}.
 \subsection{Invariant de collage}
 Pour ce deuxième raffinement, l'invariant de collage est le suivant : \\
 \[ statuts \in STATUT >\rightarrow FIN(PERSONNES) \land statuts(actif) = usagers\sim[{actif}] \]
 \[ \land statuts(bloque) = usagers\sim[{bloque}] \]
 
-En effet, pour un statut \textit{s}, statuts(s) doit correspondre à l'inverse de \textit{s} par la fonction usagers de la machine Velhop.
+En effet, pour un statut \textit{s}, \textit{\textbf{statuts(s)}} doit correspondre à l'inverse de \textit{s} par la fonction \textit{\textbf{usagers}} de la machine Velhop.
 \subsection{Modification des opérations}
-Les principales modifications ont été effectuées dans les opérations de création/suppression/déblocage d’un utilisateur et dans l’opération rendre. \\
+Les principales modifications ont été effectuées dans les opérations de création/suppression/déblocage d’un utilisateur et dans l’opération \textit{\textbf{rendre}}. \\
 
-Par exemple, pour l'opération \textit{creer\_usager} :
+Par exemple, pour l'opération \textit{\textbf{creer\_usager}} :
 \paragraph{Préconditions}
 \[user \in PERSONNES \land user \notin statuts(actif) \land user \notin statuts(bloque)\]
 \paragraph{Corps de l'opération}
@@ -324,7 +334,7 @@ Par exemple, pour l'opération \textit{creer\_usager} :
   statuts(actif) := statuts(actif) $\bigcup$ {user}
 \end{lstlisting}
 \newpage
-Pour l'opération \textit{rendre(velo, gg, temps, etat)} :
+Pour l'opération \textit{\textbf{rendre(velo, gg, temps, etat)}} :
 \paragraph{Préconditions}
 \[ velo \in velos \land gg \in gare \land velo \in ran(usagerVelo_r) \land temps \in NAT1 \land etat \in ETATSVELO\]
 \paragraph{Corps de l'opération}
@@ -339,7 +349,8 @@ Pour l'opération \textit{rendre(velo, gg, temps, etat)} :
         END
   END
 \end{lstlisting}
-On récupère l'usager ayant rendu le vélo avec \[usagerVelo\_r\sim[{velo}]\] et on l'ajoute à statuts(bloque) s'il a rendu le vélo trop tard ou en mauvais état.
+
+On récupère l'usager ayant rendu le vélo avec "$usagerVelo\_r\sim[{velo}]$" et on l'ajoute à \textit{\textbf{statuts(bloque)}} s'il a rendu le vélo trop tard ou en mauvais état.
 \newpage
 \section{Preuves}
 Nous allons nous intéresser ici à la prouvabilité de notre machine ainsi que de ses raffinements. Pour cela, nous allons utiliser le prouveur du logiciel Atelier B pour déterminer si elles sont correctes ou non.\\
@@ -380,9 +391,9 @@ Cependant, il reste encore quelques obligations de preuve à prouver. Malheureus
 
 Par rapport à la soutenance, nous avons réussi à prouver 7 obligations de preuve supplémentaires :
 \begin{itemize}
-  \item 1 obligation de preuve dans debloquer\_usager (PO4)
-  \item 5 obligations de preuve dans rendre (PO4, PO12, PO20, PO28, PO36)
-  \item 1 obligation de preuve dans deplacer\_velo (PO5)
+  \item 1 obligation de preuve dans \textit{\textbf{debloquer\_usager}} (PO4)
+  \item 5 obligations de preuve dans \textit{\textbf{rendre}} (PO4, PO12, PO20, PO28, PO36)
+  \item 1 obligation de preuve dans \textit{\textbf{deplacer\_velo}} (PO5)
 \end{itemize}
 
 Cela a permis de passer de 84\% à 93\% de réussite.
@@ -398,8 +409,8 @@ Cela a permis de passer de 84\% à 93\% de réussite.
 
 Par rapport à la soutenance, nous avons réussi à prouver 8 obligations de preuve supplémentaires :
 \begin{itemize}
-  \item 7 obligations de preuve dans rendre (PO4, PO36, PO67, PO74, PO82, PO90, PO98)
-  \item 1 obligation de preuve dans deplacer\_velo (PO5)
+  \item 7 obligations de preuve dans \textit{\textbf{rendre}} (PO4, PO36, PO67, PO74, PO82, PO90, PO98)
+  \item 1 obligation de preuve dans \textit{\textbf{deplacer\_velo}} (PO5)
 \end{itemize}
 
 Cela a permis de passer de 90\% à 96\% de réussite.
