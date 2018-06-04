@@ -91,7 +91,7 @@ En plus de ces variables (et de leurs invariants), on a ajouté un dernier invar
 \]
 En résumé, ce prédicat indique qu'un vélo ne peut pas être dans deux gares différentes (par simple logique physique).
 \subsubsection{Initialisation}
-Nous avons initialisé les quatres variables comme suit :
+Nous avons initialisé les quatre variables comme suit :
 \begin{itemize}
   \item usagers := \{\} : on l'initialise comme suit car il n'y a aucun utilisateur au moment de la création du système.
   \item etatVelos := velos * {bon\_etat} : tous les vélos sont en bon état au moment de l'initialisation.
@@ -225,14 +225,14 @@ Ce premier scénario permet de tester la création et la suppression d'un usager
   $\Rightarrow$ \textit{usagers = \{\}}
 \end{itemize}
 \subsection{Deuxième scénario}
-Ce scénario permet de tester le blocage d'un usager lorsqu'il rend un vélo abimé, le déblocage d'un utilisateur et l'opération \textit{\textbf{reparer\_velo}} : l'utilisateur débloqué peut emprunter le vélo réparé.
+Ce scénario permet de tester le blocage d'un usager lorsqu'il rend un vélo abîmé, le déblocage d'un utilisateur et l'opération \textit{\textbf{reparer\_velo}} : l'utilisateur débloqué peut emprunter le vélo réparé.
 \begin{itemize}
   \item Initialisation
   \item Création d'un utilisateur 1 \\
   $\Rightarrow$ \textit{usagers(PERSONNES1) = actif}
   \item L'utilisateur 1 emprunte le vélo 4 à la gare 2 \\
   $\Rightarrow$ \textit{usagers(PERSONNES1) = actif ; usagerVelo(PERSONNES1)=4 ; $gares(2)$ = \{$(2\mapsto5)$,$(3\mapsto6)$\}}
-  \item L'utilisateur 1 rend le vélo 4 abimé à la gare 3 après 45 minutes : il est bloqué \\
+  \item L'utilisateur 1 rend le vélo 4 abîmé à la gare 3 après 45 minutes : il est bloqué \\
   $\Rightarrow$ \textit{usagers(PERSONNES1) = bloque ; usagerVelo=\{\} ; etatVelos(4)=abime; $gares(3) = [7,8,9,4]$}
   \item Le vélo 4 est réparé \\
   $\Rightarrow$ \textit{etatVelos(4) = bon\_etat}
@@ -370,7 +370,7 @@ Pour l'ensemble des machines à tester, nous avons procédé comme suit :
 
 Dans l'ensemble, les résultats sont bons (voire très bons) et satisfaisants. Nous atteignons un pourcentage de réussite d'au moins 80 \% avec un nombre élevé d'obligations de preuve (voir les tableaux en fin de partie pour le détail des résultats du prouveur).\\
 
-Cependant, il reste encore quelques obligations de preuve à prouver. Malheureusement, dus à la compléxité des preuves ainsi qu'au temps qui nous manquait, nous n'avons pas pu les prouver. La plupart des preuves non prouvées étaient des preuves d'existence mais certaines ont été prouvées après la soutenance. D'autres preuves, plus complexes, sont des preuves d'appartenance à un ensemble.
+Cependant, il reste encore quelques obligations de preuve à prouver. Malheureusement, dus à la complexité des preuves ainsi qu'au temps qui nous manquait, nous n'avons pas pu les prouver. La plupart des preuves non prouvées étaient des preuves d'existence mais certaines ont été prouvées après la soutenance. D'autres preuves, plus complexes, sont des preuves d'appartenance à un ensemble.
 \paragraph{Résumé de la machine abstraite}
 \begin{center}
 	\begin{tabular}{| l | c | r | r| r |}
